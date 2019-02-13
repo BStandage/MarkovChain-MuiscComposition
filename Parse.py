@@ -24,7 +24,6 @@ def parse(filename):
             if message.type == "set_tempo":
                 tempo = message.tempo
             elif message.type == "note_on":
-                print(message)
                 # note is played at the same time
                 if message.time == 0:
                     current_state.append(message.note)
@@ -40,23 +39,32 @@ def parse(filename):
 
 def permute_transitions(prev_state, current_state, ticks, tempo, tpb):
     for x in list(itertools.product(prev_state, current_state)):
-        # add x[0]:{(x[1], time)} to the Markov Chain
+        # add x[0]:{x[1]: [time, count]} to the Markov Chain
         if x[0] not in mc:
             mc[x[0]] = {}
-            mc[x[0]][x[1]] = duration(ticks, tempo, tpb)
+            mc[x[0]][x[1]] = [duration(ticks, tempo, tpb), 1]
+
+        # if the note has already been transitioned to, increase the transition count by 1
+        # if the key is in the dict and the value is == dict[key]
+        elif x[1] in mc[x[0]] and mc[x[0]][x[1]][0] == duration(ticks, tempo, tpb):
+            mc[x[0]][x[1]] = [duration(ticks, tempo, tpb), mc[x[0]][x[1]][1] + 1]
+
+        # if the note has not been transitioned to, add it to the dictionary with a count of 1
         else:
-            mc[x[0]][x[1]] = duration(ticks, tempo, tpb)
+            mc[x[0]][x[1]] = [duration(ticks, tempo, tpb), 1]
+
+        print(mc)
 
 
-
+# bucket to nearest 50ms
 def duration(ticks, tempo, tpb):
     ms = (ticks / tpb * tempo) / 1000
-    return int(ms - (ms % 250) + 250)
+    return int(ms - (ms % 50) + 50)
 
 
 
 
 if __name__ == '__main__':
     parse('bachcontra1.mid')
-    #permute_transitions(['a','b','c'], ['a', 'b'], 10, 10, 10)
+    #permute_transitions(['a','b','c'], ['a', 'b', 'a'], 10, 10, 10)
     print(mc)
