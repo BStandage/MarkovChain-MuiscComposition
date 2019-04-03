@@ -1,4 +1,6 @@
 from mido import MidiFile
+import numpy as np
+import random
 import itertools
 
 '''
@@ -64,21 +66,34 @@ def duration(ticks, tempo, tpb):
 # convert a transition frequency matrix to a transition probability matrix
 def to_probability_matrix(tfm):
     total = 0
+    i = 0
     transitions = 0
+
     for keys in tfm:
         for inner_keys in tfm[keys]:
             total += tfm[keys][inner_keys][1]
             transitions += 1
-
-    for keys in tfm:
         for inner_keys in tfm[keys]:
             tfm[keys][inner_keys][1] /= transitions
-
+        transitions = 0
+        i += 1
 
     return(tfm)
 
 
 if __name__ == '__main__':
-    parse('bachcontra1.mid')
+    parse('bach_846.mid')
     # permute_transitions(['a','b','c'], ['a', 'b', 'a'], 10, 10, 10)
-    print(to_probability_matrix(mc))
+    tpm = to_probability_matrix(mc)
+    print(tpm)
+    transition_probabilities = []
+    keys = []
+
+    for i in tpm[72]:
+        transition_probabilities.append(tpm[72][i][1])
+        keys.append(i)
+
+    x= np.random.choice(keys, replace=True, p=transition_probabilities)
+    print(x)
+
+

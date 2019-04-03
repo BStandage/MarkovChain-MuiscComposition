@@ -7,7 +7,7 @@ class Parse:
     def __init__(self, filename):
         self.filename = filename
         self.tempo = None
-        self.markovchain = {}
+        self.tpm = {}
         self.parse()
 
     def printname(self):
@@ -41,18 +41,18 @@ class Parse:
     def permute_transitions(self, prev_state, current_state, duration):
         for x in list(itertools.product(prev_state, current_state)):
             # add x[0]:{x[1]: [time, count]} to the Markov Chain
-            if x[0] not in self.markovchain:
-                self.markovchain[x[0]] = {}
-                self.markovchain[x[0]][x[1]] = [duration, 1]
+            if x[0] not in self.tpm:
+                self.tpm[x[0]] = {}
+                self.tpm[x[0]][x[1]] = [duration, 1]
 
             # if the note has already been transitioned to, increase the transition count by 1
             # if the key is in the dict and the value is == dict[key]
-            elif x[1] in self.markovchain[x[0]] and self.markovchain[x[0]][x[1]][0] == duration:
-                self.markovchain[x[0]][x[1]] = [duration, self.markovchain[x[0]][x[1]][1] + 1]
+            elif x[1] in self.tpm[x[0]] and self.tpm[x[0]][x[1]][0] == duration:
+                self.tpm[x[0]][x[1]] = [duration, self.tpm[x[0]][x[1]][1] + 1]
 
             # if the note has not been transitioned to, add it to the dictionary with a count of 1
             else:
-                self.markovchain[x[0]][x[1]] = [duration, 1]
+                self.tpm[x[0]][x[1]] = [duration, 1]
 
     # bucket to nearest 50ms
     def duration(self, ticks, tpb):
@@ -62,17 +62,19 @@ class Parse:
     # convert a transition frequency matrix to a transition probability matrix
     def to_probability_matrix(self):
         total = 0
+        i = 0
         transitions = 0
-        for keys in self.markovchain:
-            for inner_keys in self.markovchain[keys]:
-                total += self.markovchain[keys][inner_keys][1]
+
+        for keys in self.tpm:
+            for inner_keys in self.tpm[keys]:
+                total += self.tpm[keys][inner_keys][1]
                 transitions += 1
+            for inner_keys in self.tpm[keys]:
+                self.tpm[keys][inner_keys][1] /= transitions
+            transitions = 0
+            i += 1
 
-        for keys in self.markovchain:
-            for inner_keys in self.markovchain[keys]:
-                self.markovchain[keys][inner_keys][1] /= transitions
-
-        return(self.markovchain)
+        return (self.tpm)
 
 
 
