@@ -63,10 +63,11 @@ def duration(ticks, tempo, tpb):
     return int(ms - (ms % 50) + 50)
 
 
+
 # convert a transition frequency matrix to a transition probability matrix
 def to_probability_matrix(tfm):
     total = 0
-    i = 0
+    t = 0
     transitions = 0
 
     for keys in tfm:
@@ -74,11 +75,18 @@ def to_probability_matrix(tfm):
             total += tfm[keys][inner_keys][1]
             transitions += 1
         for inner_keys in tfm[keys]:
-            tfm[keys][inner_keys][1] /= transitions
+            tfm[keys][inner_keys][1] /= total
+
+
+        total = 0
+
+        t=0
         transitions = 0
-        i += 1
+
 
     return(tfm)
+
+
 
 
 if __name__ == '__main__':
@@ -95,5 +103,8 @@ if __name__ == '__main__':
 
     x= np.random.choice(keys, replace=True, p=transition_probabilities)
     print(x)
+
+    mid = MidiFile('test.mid')
+    print(mid.length)
 
 

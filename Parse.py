@@ -62,7 +62,6 @@ class Parse:
     # convert a transition frequency matrix to a transition probability matrix
     def to_probability_matrix(self):
         total = 0
-        i = 0
         transitions = 0
 
         for keys in self.tpm:
@@ -70,9 +69,9 @@ class Parse:
                 total += self.tpm[keys][inner_keys][1]
                 transitions += 1
             for inner_keys in self.tpm[keys]:
-                self.tpm[keys][inner_keys][1] /= transitions
+                self.tpm[keys][inner_keys][1] /= total
+            total = 0
             transitions = 0
-            i += 1
 
         return (self.tpm)
 

@@ -1,5 +1,7 @@
 import mido
+from mido import MidiFile, MidiTrack
 import numpy as np
+import json
 import random
 
 from Parse import Parse
@@ -39,10 +41,7 @@ class Simulation:
         return np.random.choice(keys, p=transition_probabilities)
 
 
-
-
-
-    # Try doing recursively
+    # Recursive
     def next_state(self, initial_note, l):
         if(l > 0):
             next = self.transition(initial_note)
@@ -54,11 +53,27 @@ class Simulation:
 
 
 
+
 if __name__ == '__main__':
     file = Parse('bach_846.mid')
     tpm = file.parse()
+    print(tpm)
     simulate = Simulation(tpm)
-    print(simulate.next_state(72, 50))
+    print(simulate.next_state(72, 100))
+    print(simulate.track)
+
+
+    mid = MidiFile()
+    track = MidiTrack()
+    mid.tracks.append(track)
+    for i in simulate.track:
+        track.append(i[0])
+        track.append(i[1])
+
+
+    print(mid)
+
+    mid.save('test.mid')
 
 
 
