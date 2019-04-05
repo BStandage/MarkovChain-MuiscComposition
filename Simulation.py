@@ -1,7 +1,5 @@
-import mido
-from mido import MidiFile, MidiTrack
+from mido import MidiFile, MidiTrack, Message
 import numpy as np
-import json
 import random
 
 from Parse import Parse
@@ -14,10 +12,12 @@ class Simulation:
         self.initial_note = self.get_init_note()
 
         
-    # Must adjust duration
-    def to_midi_message(self, n):
-        return [mido.Message('note_on', note=n, velocity=127, time=0),
-                mido.Message('note_off', note=n, velocity=0, time=50)]
+    # *BUG* Must adjust duration
+    # The problem is that the choice funciton can not select tuples.
+    # To get around this we must index the list of tuples and select the index corresponding to the selected probability.
+    def to_midi_message(self, n, d):
+        return [Message('note_on', note=n, velocity=127, time=0),
+                Message('note_off', note=n, velocity=0, time=d)]
 
 
     # We want to randomly begin the piece on the 1 or the 5
@@ -36,16 +36,20 @@ class Simulation:
         for i in self.tpm[note]:
             transition_probabilities.append(self.tpm[note][i][1])
             # [i, self.tpm[note][i][0]]
-            keys.append(i)
+            keys.append([i, self.tpm[note][i][0]])
 
-        return np.random.choice(keys, p=transition_probabilities)
+        return keys[np.random.choice(len(keys), p=transition_probabilities)]
 
 
-    # Recursive
+    # Recursively find the most probably transition note and fill the track
     def next_state(self, initial_note, l):
-        if(l > 0):
-            next = self.transition(initial_note)
-            self.track.append(self.to_midi_message(next))
+        if l > 0:
+            while True:
+                next = self.transition(initial_note[0])
+                difference = abs(initial_note[0] - next[0])
+                if 60 < next[0] < 84 and difference <= 9:
+                    break
+            self.track.append(self.to_midi_message(next[0], next[1]))
             l -= 1
             self.next_state(next, l)
         else:
@@ -59,10 +63,11 @@ if __name__ == '__main__':
     tpm = file.parse()
     print(tpm)
     simulate = Simulation(tpm)
-    print(simulate.next_state(72, 100))
+    print(simulate.next_state([78, 50], 100))
     print(simulate.track)
 
 
+    # CREATE A NEW CLASS TO BUILD CONVERT INTO MIDI FILE
     mid = MidiFile()
     track = MidiTrack()
     mid.tracks.append(track)
