@@ -1,0 +1,21 @@
+h1 {color: black;}
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: radial-gradient(rgba(192,192,192,0), rgba(192,192,192,1));
+}
+
+
+/*
+button {
+  background-color: black; /* Green */
+  /*border: silver;
+  color: silver;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+}*/

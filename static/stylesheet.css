@@ -1,0 +1,5 @@
+h1 {color: blue;}
+
+#grad {
+  background-image: radial-gradient(grey, white);
+}

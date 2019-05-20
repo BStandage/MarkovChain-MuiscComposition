@@ -8,10 +8,7 @@ class Parse:
         self.filename = filename
         self.tempo = None
         self.tpm = {}
-        self.parse()
 
-    def printname(self):
-        print(self.filename)
 
     def parse(self):
         midi = MidiFile(self.filename)
@@ -38,6 +35,7 @@ class Parse:
 
         return(self.to_probability_matrix())
 
+
     def permute_transitions(self, prev_state, current_state, duration):
         for x in list(itertools.product(prev_state, current_state)):
             # add x[0]:{x[1]: [time, count]} to the Markov Chain
@@ -54,10 +52,12 @@ class Parse:
             else:
                 self.tpm[x[0]][x[1]] = [duration, 1]
 
+
     # bucket to nearest 50ms
     def duration(self, ticks, tpb):
         ms = (ticks / tpb * self.tempo) / 1000
         return int(ms - (ms % 50) + 50)
+
 
     # convert a transition frequency matrix to a transition probability matrix
     def to_probability_matrix(self):
@@ -74,12 +74,6 @@ class Parse:
             transitions = 0
 
         return (self.tpm)
-
-
-
-def new_file(filename):
-    file = Parse('bach_846.mid')
-    print(file.printname())
 
 
 if __name__ == '__main__':

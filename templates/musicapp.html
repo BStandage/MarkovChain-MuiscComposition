@@ -1,0 +1,76 @@
+<!doctype html>
+<h1 style="font-family:Verdana;" align="center">Stochastic Models for Music Analysis and Compostition</h1>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style2.css') }}">
+
+<script>
+    function get_key(){
+        var keyList = document.getElementById("keyList");
+        document.getElementById("key").value=keyList.options[keyList.selectedIndex].text;
+    }
+
+
+</script>
+
+
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script type=text/javascript>
+			$(function() {
+			  $('a#process_input').bind('click', function() {
+				$.getJSON('/_background_process', {
+				  key: get_key().value
+				}, function(data) {
+				  $("#result").text(data.result);
+				});
+				return false;
+			  });
+			});
+		</script>
+
+</head>
+
+<body>
+    <div class="main">
+    <h3>Welcome!</h3>
+        <form>
+        Select a key:
+
+        <select id="keyList">
+            <option selected disabled hidden>Select...</option>
+            <option>No. 1: C major</option>
+            <option>No. 2: C minor</option>
+            <option>No. 3: C sharp major</option>
+            <option>No. 4: C sharp minor</option>
+            <option>No. 5: D major</option>
+            <option>No. 6: D minor</option>
+            <option>No. 7: E flat major</option>
+            <option>No. 8: D# minor</option>
+            <option>No. 9: E major</option>
+            <option>No. 10: E minor</option>
+            <option>No. 11: F major</option>
+            <option>No. 12: F minor</option>
+            <option>No. 13: F sharp major</option>
+            <option>No. 14: F sharp minor</option>
+            <option>No. 15: G major</option>
+            <option>No. 16: G minor</option>
+            <option>No. 17: A flat major</option>
+            <option>No. 18: G sahrp minor</option>
+            <option>No. 19: A major</option>
+            <option>No. 20: A minor</option>
+            <option>No. 21: B flat major</option>
+            <option>No. 22: B flat minor</option>
+            <option>No. 23: B major</option>
+            <option>No. 24: B minor</option>
+        </select>
+
+        <a href=# id=process_input><button >Generate</button></a>
+
+        <!--<p>Generating a fugue in <input type="text" id="key" size="20"</p>-->
+        </form>
+    <p id=result></p>
+    </div>
+
+</body>
+
+
+
