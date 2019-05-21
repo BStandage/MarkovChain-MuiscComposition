@@ -1,5 +1,6 @@
 from mido import MidiFile, MidiTrack, Message
 import numpy as np
+import random
 
 
 
@@ -21,7 +22,7 @@ class Simulation:
     # CHANGED DURATION TO 200ms
     def to_midi_message(self, n, d):
         return [Message('note_on', note=n, velocity=127, time=0),
-                Message('note_off', note=n, velocity=0, time=200)]
+                Message('note_off', note=n, velocity=0, time=250)]
 
 
     # We want to randomly begin the piece on the 1 or the 5
@@ -62,20 +63,20 @@ class Simulation:
                 next = self.transition(initial_note[0])
                 difference = abs(initial_note[0] - next[0])
                 # if there's a leap...
-                if len(self.track.track) == 1 and difference > 2:
+                if len(self.track.track) == 1 and difference > 4:
                     next[0] = initial_note[0] + 2
                     print('Added via Leap: ', next[0])
                     break
-                elif len(self.track.track) > 1 and abs(self.track.track[len(self.track.track) - 2][0].note - initial_note[0]) > 2:
+                elif len(self.track.track) > 1 and abs(self.track.track[len(self.track.track) - 2][0].note - initial_note[0]) > 4:
                     next[0] = self.leap_rule()
                     print('Added via Leap: ', next[0])
                     break
+                elif l < 16 and initial_note[0] in [67, 71, 79, 83]:
+                    next[0] = self.resolving_note()
+                    l = 0
+                    break
                 # if not then generate most probable
-                # *BUG* Generally these requirements are too strict and no note in the state space can be generated
-                # Potential Fixes: 1. Build the transition probability matrix over notes only in the state space + 12n
-                # 2. Force a next note if after too many tries (could cause overfitting)
-                # 3. Keep the transition probability matrix as is, but increase each voices state space to two octaves
-                elif self.not_trill(next[0]) and next[0] in self.state_space:
+                elif self.not_trill(next[0]) and next[0] in self.state_space and next[0] != initial_note[0] and difference <= 9:
                     print('Added note: ', next[0])
                     break
                 print('Failed Note: ', next[0])
@@ -97,7 +98,7 @@ class Simulation:
 
         if l > 3:
             if (self.track.track[l - 1][0].note == self.track.track[l - 3][0].note
-                and abs(self.track.track[l - 2][0].note - self.track.track[l - 1][0].note) == 1) and \
+                and ((abs(self.track.track[l - 2][0].note - self.track.track[l - 1][0].note) == 1) or abs(self.track.track[l - 2][0].note - self.track.track[l - 1][0].note) == 2)) and \
                             self.track.track[l - 2][0].note == n:
                 return False
             else:
@@ -106,19 +107,19 @@ class Simulation:
             return True
 
 
-    # If a leap exists (a jump in MIDI notes greater than 2) then the next note must be a step
+    # If a leap exists (a jump in MIDI notes greater than 4) then the next note must be a step
     # in the opposite direction.
     def leap_rule(self):
         l = len(self.track.track)
 
-        leap_size = self.track.track[l - 2][0].note - self.track.track[l - 1][0].note
+        leap_size = self.track.track[l - 1][0].note - self.track.track[l - 2][0].note
 
-        if leap_size > 2:
+        if leap_size > 4:
             if self.track.track[l - 1][0].note - 2 in self.state_space:
                 next = self.track.track[l - 1][0].note - 2
             else:
                 next = self.track.track[l - 1][0].note - 1
-        elif leap_size < -2:
+        elif leap_size < -4:
             if self.track.track[l - 1][0].note + 2 in self.state_space:
                 next = self.track.track[l - 1][0].note + 2
             else:
@@ -135,11 +136,29 @@ class Simulation:
             if i not in complement:
                 state_space.append(self.initial_note[0] + i)
 
+        # Extend state space an additional octave higher
         for i in range(1, len(state_space)):
-            state_space.append(state_space[i] + 12)
+          state_space.append(state_space[i] + 12)
 
         print(state_space)
         return state_space
+
+
+    # ensures that the piece ends on a resolving tone
+    def resolving_note(self):
+        l = len(self.track.track)
+
+        if self.track.track[l - 1][0].note == 67:
+            final = random.choice([60, 72])
+        elif self.track.track[l - 1][0].note == 79:
+            final = random.choice([72, 84])
+        elif self.track.track[l - 1][0].note == 71:
+            final = 72
+        elif self.track.track[l - 1][0].note == 83:
+            final = 84
+
+        return final
+
 
 
 

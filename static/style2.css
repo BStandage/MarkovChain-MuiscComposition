@@ -8,14 +8,25 @@ body {
 }
 
 
-/*
+
 button {
-  background-color: black; /* Green */
-  /*border: silver;
+  background-color: lime; /* Green */
+  border: silver;
   color: silver;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 13px;
-}*/
+}
+
+select {
+  background-color: lime; /* Green */
+  border: silver;
+  color: silver;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+}

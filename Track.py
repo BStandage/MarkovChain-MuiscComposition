@@ -52,10 +52,10 @@ class Track:
 
     #
     def shift_track(self):
-        for i in range(0, 31):
+        for i in range(0, 16):
             self.track.append([Message('note_on', note=0, velocity=0, time=0),
                 Message('note_off', note=0, velocity=0, time=200)])
-        for i in range(0, 30):
+        for i in range(0, 15):
             shifted_note = track1.track[i][0].note - 20
             self.track.append([Message('note_on', note=shifted_note, velocity=127, time=0),
                 Message('note_off', note=shifted_note, velocity=0, time=200)])
@@ -78,7 +78,7 @@ class Track:
 if __name__ == '__main__':
 
     # build track with title, 'voice 1', voice: 'soprano' and length 100
-    track1 = Track('voice 1', 'soprano', 100)
+    track1 = Track('voice 1', 'soprano', 32)
     track1.build_track()
 
 
