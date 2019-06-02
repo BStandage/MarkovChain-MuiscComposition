@@ -3,7 +3,6 @@ import numpy as np
 import random
 
 
-
 class Simulation:
 
 
@@ -14,6 +13,7 @@ class Simulation:
         self.messages = []
         self.initial_note = self.get_init_note()
         self.state_space = self.state_space()
+        self.track.track.append(self.to_midi_message(self.initial_note[0], 250))
 
 
     # Function: to_midi_message
@@ -22,7 +22,7 @@ class Simulation:
     # CHANGED DURATION TO 200ms
     def to_midi_message(self, n, d):
         return [Message('note_on', note=n, velocity=127, time=0),
-                Message('note_off', note=n, velocity=0, time=250)]
+                Message('note_off', note=n, velocity=0, time=d)]
 
 
     # We want to randomly begin the piece on the 1 or the 5
@@ -54,22 +54,16 @@ class Simulation:
     # Recursively find the most probable transition note and fill the track
     # Function: next_state
     # accept: a note and a number of notes
-    # return:
-    # MUST CHANGE BASE CASE: Check if the length of the piece is n notes long
-    # once it is, check for a resolving note and end the piece
+    # return: the most probable next note that is in the state space
     def next_state(self, initial_note, l):
         if l > 0:
             while True:
                 next = self.transition(initial_note[0])
                 difference = abs(initial_note[0] - next[0])
                 # if there's a leap...
-                if len(self.track.track) == 1 and difference > 4:
-                    next[0] = initial_note[0] + 2
-                    print('Added via Leap: ', next[0])
-                    break
-                elif len(self.track.track) > 1 and abs(self.track.track[len(self.track.track) - 2][0].note - initial_note[0]) > 4:
+                if len(self.track.track) > 1 and abs(self.track.track[len(self.track.track) - 2][0].note - initial_note[0]) > 4:
                     next[0] = self.leap_rule()
-                    print('Added via Leap: ', next[0])
+                    print('Added via Leap: ', next)
                     break
                 elif l < 16 and initial_note[0] in [67, 71, 79, 83]:
                     next[0] = self.resolving_note()
@@ -77,7 +71,7 @@ class Simulation:
                     break
                 # if not then generate most probable
                 elif self.not_trill(next[0]) and next[0] in self.state_space and next[0] != initial_note[0] and difference <= 9:
-                    print('Added note: ', next[0])
+                    print('Added note: ', next)
                     break
                 print('Failed Note: ', next[0])
                 print('Why?:')
@@ -91,8 +85,9 @@ class Simulation:
             return self.messages
 
 
+    # Function: not_trill
     # accept: the most recently generated note
-    # return: True if this note does not create a trill, False otherwise
+    # return: True if this note does not create a non-ornamental trill, False otherwise
     def not_trill(self, n):
         l = len(self.track.track)
 
@@ -109,16 +104,22 @@ class Simulation:
 
     # If a leap exists (a jump in MIDI notes greater than 4) then the next note must be a step
     # in the opposite direction.
+    # Function: leap_rule
+    # accept: self
+    # return: the next note in the state space given there was previously a leap
     def leap_rule(self):
         l = len(self.track.track)
 
         leap_size = self.track.track[l - 1][0].note - self.track.track[l - 2][0].note
 
+        # if the piece leaps upwards
         if leap_size > 4:
+            # move stepwise in the opposite direction, ensuring the next note is in the state space
             if self.track.track[l - 1][0].note - 2 in self.state_space:
                 next = self.track.track[l - 1][0].note - 2
             else:
                 next = self.track.track[l - 1][0].note - 1
+        # if the piece leaps downwards
         elif leap_size < -4:
             if self.track.track[l - 1][0].note + 2 in self.state_space:
                 next = self.track.track[l - 1][0].note + 2
@@ -129,6 +130,10 @@ class Simulation:
 
 
     # Define a statespace for the track. This state space is normalized over the C major scale
+    # if the piece leaps upwards
+    # Function: leap_rule
+    # accept: self
+    # return: a statespace normalized about C Major
     def state_space(self):
         state_space = []
         complement = [1, 3, 6, 8, 10]
@@ -145,6 +150,10 @@ class Simulation:
 
 
     # ensures that the piece ends on a resolving tone
+    # must add an additional function to make sure the resolving note also happens on the first or third beat
+    # Function: leap_rule
+    # accept: self
+    # return: the final note of the piece
     def resolving_note(self):
         l = len(self.track.track)
 
@@ -158,40 +167,3 @@ class Simulation:
             final = 84
 
         return final
-
-
-
-
-
-
-
-if __name__ == '__main__':
-
-
-    # Simulation object
-    #simulate = Simulation(tpm, first_voice)
-    #print(simulate.next_state([78, 50], 100))
-    #print(simulate.messages)
-
-
-
-    # CREATE A NEW CLASS TO BUILD CONVERT INTO MIDI FILE
-    mid = MidiFile()
-    track = mid.add_track("test")
-    #mid.tracks.append(track)
-    #for i in simulate.messages:
-     #   track.append(i[0])
-      #  track.append(i[1])
-
-
-    print(mid)
-
-    mid.save('test.mid')
-
-
-
-
-
-
-
-## Consider making histograms transitions in every key, then normalize and compare

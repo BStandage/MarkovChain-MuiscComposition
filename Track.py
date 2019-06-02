@@ -19,6 +19,9 @@ class Track:
 
 
     # ADJUST RANGE OVER A SINGLE OCTIVE
+    # Function: set_range
+    # accept: self
+    # return: A range of MIDI values for a given voice
     def set_range(self):
         if self.voice == 'soprano':
             return [60, 84]
@@ -29,7 +32,9 @@ class Track:
         elif self.voice == 'bass':
             return [40, 64]
 
-
+    # Function: build_track
+    # accept: self
+    # return: None
     def build_track(self):
         file = Parse('bach_846.mid')
         tpm = file.parse()
@@ -63,6 +68,9 @@ class Track:
 
 
     @staticmethod
+    # Function: write
+    # accept: A list of tracks for each voice
+    # return:
     def write(track_list, filename):
         mid = MidiFile()
         for track in track_list:
@@ -80,6 +88,7 @@ if __name__ == '__main__':
     # build track with title, 'voice 1', voice: 'soprano' and length 100
     track1 = Track('voice 1', 'soprano', 32)
     track1.build_track()
+    track1.track[len(track1.track) - 1][1].time = 500
 
 
     #track2 = Track('voice 2', 'alto', 100)
@@ -89,11 +98,5 @@ if __name__ == '__main__':
 
     track_list = [track1]
 
-    print(track1.write(track_list, 'testTrack1.2.mid'))
+    print(track1.write(track_list, 'testTrack1.5.mid'))
     print('Complete!')
-
-
-    # start track 2 after track 1 completes subject and counter subject
-    # set the next n tracks to have the subject and counter subject of the first
-    # delay each track to begin at the end of the counter subject of the previous track
-    # shift the additional tracks to a certain degree (up a 5th for example)

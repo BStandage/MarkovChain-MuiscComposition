@@ -1,4 +1,5 @@
-from mido import MidiFile
+from mido import MidiFile, tempo2bpm
+from bisect import bisect_left
 import itertools
 
 
@@ -19,7 +20,8 @@ class Parse:
         for track in midi.tracks:
             for message in track:
                 if message.type == "set_tempo":
-                    self.tempo = message.tempo
+                    #self.tempo = message.tempo
+                    self.tempo = 500000
                 elif message.type == "note_on":
                     # note is played at the same time
                     if message.time == 0:
@@ -53,10 +55,27 @@ class Parse:
                 self.tpm[x[0]][x[1]] = [duration, 1]
 
 
-    # bucket to nearest 50ms
+    # bucket to nearest note (sixteenth, eighth, quarter, half, whole)
     def duration(self, ticks, tpb):
         ms = (ticks / tpb * self.tempo) / 1000
-        return int(ms - (ms % 50) + 50)
+        note_lengths = [125, 250, 500, 1000, 2000]
+
+        pos = bisect_left(note_lengths, ms)
+        if pos == 0:
+            return note_lengths[0]
+        if pos == len(note_lengths):
+            return note_lengths[-1]
+        before = note_lengths[pos - 1]
+        after = note_lengths[pos]
+        if after - ms < ms - before:
+            return after
+        else:
+            return before
+
+        #print('BPM: ', tempo2bpm(self.tempo))
+        #print("ms: ", ms)
+        #print("bucket: ", int(ms - (ms % 125) + 125))
+        #return int(ms - (ms % 125) + 125)
 
 
     # convert a transition frequency matrix to a transition probability matrix
