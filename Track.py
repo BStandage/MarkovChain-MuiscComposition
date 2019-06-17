@@ -1,7 +1,7 @@
 from Parse import Parse
 from Simulation import Simulation
 from mido import MidiFile, Message
-from copy import deepcopy
+import subprocess
 
 class Track:
 
@@ -18,7 +18,6 @@ class Track:
         self.range = self.set_range()
 
 
-    # ADJUST RANGE OVER A SINGLE OCTIVE
     # Function: set_range
     # accept: self
     # return: A range of MIDI values for a given voice
@@ -39,20 +38,9 @@ class Track:
         file = Parse('bach_846.mid')
         tpm = file.parse()
 
-        print(tpm)
-
         simulate = Simulation(tpm, self)
         simulate.next_state(simulate.get_init_note(), self.length)
 
-        #print(self.track)
-
-
-    def apply_weights(self, tpm):
-        for key in tpm:
-            for inner_key in tpm[key]:
-                tpm[key][inner_key][1] = tpm[key][inner_key][1]*4
-
-        print(tpm)
 
 
     #
@@ -70,7 +58,7 @@ class Track:
     @staticmethod
     # Function: write
     # accept: A list of tracks for each voice
-    # return:
+    # return: a MIDI file
     def write(track_list, filename):
         mid = MidiFile()
         for track in track_list:
@@ -88,15 +76,20 @@ if __name__ == '__main__':
     # build track with title, 'voice 1', voice: 'soprano' and length 100
     track1 = Track('voice 1', 'soprano', 32)
     track1.build_track()
-    track1.track[len(track1.track) - 1][1].time = 500
-
 
     #track2 = Track('voice 2', 'alto', 100)
     #track2.build_track()
     #track2.shift_track()
 
-
     track_list = [track1]
 
-    print(track1.write(track_list, 'testTrack1.5.mid'))
+    #print the total time of the track
+    time = 0
+    for i in track1.track:
+        time += i[1].time
+
+    print(time)
+
+    midifile = track1.write(track_list, 'testTrack1.6.mid')
     print('Complete!')
+    subprocess.call(['playmidi /Users/audreystandage/PycharmProjects/MarkovChain-MusicComposition/testTrack1.5.mid'], shell=True)

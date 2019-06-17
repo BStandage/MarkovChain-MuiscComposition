@@ -1,6 +1,5 @@
 <!doctype html>
-<!---<h1 style="font-family:Verdana;" align="center">Stochastic Models for Music Analysis and Compostition</h1>
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style2.css') }}">--->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style2.css') }}">
 
 <script>
     function get_key(){
@@ -10,34 +9,6 @@
 
 
 </script>
-
-
-
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
-.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
-.fa-anchor,.fa-coffee {font-size:200px}
-</style>
-<body>
-
-<!-- Navbar -->
-<div class="w3-top">
-  <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-    <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 1</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-  </div>
-</div>
 
 
 <head>
@@ -56,17 +27,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 		</script>
 
     <script type='text/javascript' src='https://kitchwww.github.io/midi/midi.js'></script>
-<a href="#" onClick="function(){
-MIDIjs.initAll();
-MIDIjs.play('testTrack1.2.mid');}">Play My Song</a>
+<!---<a href="#" onClick="function(){
+#MIDIjs.initAll();
+#MIDIjs.play('testTrack1.2.mid');}">Play My Song</a>--->
+    <h1>Stochastic Models for Music Analysis and Composition</h1>
+    <h2> <p>Authors: Brian Standage, Jared Roush</p>
+  <p>Supervisor: Dr. Wai-Tong (Louis) Fan</p></h2>
 
-</head>
-
-<!-- Header -->
-<header class="w3-container w3-red w3-center" style="padding:128px 16px">
-  <h1 class="w3-margin w3-jumbo">Stochastic Models for Music Analysis and Composition</h1>
-  <p class="w3-xlarge">Authors: Brian Standage, Jared Roush</p>
-  <p class="w3-xlarge">Supervisor: Dr. Wai-Tong (Louis) Fan</p>
   <div class="main">
     <h3>Select a key</h3>
         <form>
@@ -106,155 +73,7 @@ MIDIjs.play('testTrack1.2.mid');}">Play My Song</a>
     <p id=result></p>
     </div>
 
-</header>
 
-
-<!-- 0 Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>MIDI Player</h1>
-
-
-    </div>
-  </div>
-</div>
-
-<!-- First Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>About</h1>
-
-      <p class="w3-text-grey">The goal of our project is to simulate the composition of the fugal style that became popular during the Baroque Period (circa 1600 - 1750) using stochastic models built on Markov
-chains. Through this simulation, we will compare the effectiveness of various stochastic
-models to determine what methods are most effective in composing music through procedural content generation.
-Particularly, we will be investigating methods to emulate the style of J.S. Bach (1685-1750),
-using the fugues from the Well-Tempered Clavier, BWV 846–893. We aim to address
-the challenge of composing Markov generated music with multiple communicating voices.
-There will be at least three major components of music theory that will be used to establish
-heuristics, those being counterpoint, voice leading, and fugal structure. These heuristics
-will be used to apply weights to values in the transition probability matrix.</p>
-    </div>
-  </div>
-</div>
-
-
-
-<!-- Second Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Data Collection</h1>
-
-      <p class="w3-text-grey">To collect a large amount of relevant data, we began by downloading the MIDI files for
-each of the 48 pieces of music in the Well-Tempered Clavier, BWV 846–893. This includes
-two sets of 24 preludes and fugues composed in every major and minor key. To fulfill the
-assumptions of the model it is important that we parse these pieces, removing each of the
-preludes, to keep only the fugues. Our initial approach is to train the model on one fugue
-at a time. Another approach is to train the model on two fugues of the same key. Both
-approaches of data selection will ensure that the data is from a single musical key.
-Once the fugues are selected the files must be parsed for the relevant data. The related data
-can be read using a Python library called Mido. Mido extracts the data into individual
-”tracks”. Each track contains ”messages” which store the time signature, each note that is
-played, the velocity at which the notes are played, and the time elapsed since the previous
-note was played. In order to keep the state space at a computationally feasible size, we
-collect only the notes that are played and the time elapsed since the previous note was
-played.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- Third Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Data Structure</h1>
-
-        <p class="w3-text-grey">The data structure used to represent the stochastic process is a dictionary of dictionaries. In
-Python, dictionaries are represented as sets of key-value pairs, where a value can be accessed
-by referencing its unique key. This is advantageous when building a stochastic model from
-MIDI data because each note in the set of all notes in the piece can be represented as a
-key in the outer dictionary. Additionally, each inner dictionary can hold key-value pairs
-that represent a note and its duration. Such keys of the outer dictionary represent the
-initial states of the stochastic process. The transition states of the stochastic model are
-represented by both the key and the value of the inner dictionary.
-A key will be added to the outer dictionary for each note that is played in the musical
-piece. By calling and accessing a key one can see the value that is associated with it. In
-this dictionary of dictionaries, the value associated to each key in the outer dictionary will
-be another dictionary. Like the outer dictionary, each inner dictionary is also composed
-of key-value pairs. The keys of the inner dictionaries are the notes that were directly
-transitioned to by the other notes and their values are the notes respective durations.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- Fourth Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Music Theory</h1>
-
-        <h3>The Fugue</h3>
-
-      <p class="w3-text-grey">A fugue is a composition which uses techniques from both counterpoint and voice leading
-that involve two or more voices. A fugue is centered on a subject that is introduced by
-one voice, then adopted by the second voice at a different pitch while the first voice plays
-(or sings) a different melody that is referred to as the countersubject. When the subject
-reenters in new voices, it is often not an exact replica of the first voice transposed to a
-different pitch, because such a reentry may violate the rules that have been established in
-counterpoint.</p>
-
-        <h3>Fugal Structure</h3>
-
-        <p class="w3-text-grey">The overall structure of a fugue consists of the exposition, episode(s), development, final
-entries and coda. The exposition begins with the first voice playing the subject and ends
-when the final voice plays the subject. The episode uses material that is introduced in
-the exposition (often just a portion of the subject or countersubject) and its purpose is
-to modulate (or transition) to a new key before the subject reemerges. The development
-contains at least one full statement of the subject, but this is accompanied by at least one
-other voice playing the countersubject or a new countersubject. The development plays
-with musical ideas introduced in the exposition and may develop these ideas with the use of
-free-counterpoint. The final entries employ use of a counter-exposition, which is a second
-exposition that only uses two entries of the subject in the original key of the piece and
-occur in the opposite order of the exposition. The coda is any material that is played (or
-sung) after the final entries and is used to close the fugue.</p>
-
-
-        <h3>Counterpoint and Voice Leading</h3>
-
-      <p class="w3-text-grey">Counterpoint is the relation between multiple voices that utilize a polyphonic texture but
-remain rhythmically independent. Polyphonic music is composed of two or more independent melodies that are played (or sung) simultaneously. Conversely, homophonic music
-involves a melody that is accompanied by chords. Contrapuntal techniques are the set of
-rules that are used to weave the independent melodies together in an appropriate way. This
-process is often employed to develop musical material, and, in a strict sense, this disregards
-any underlying chords.
-Voice leading is like counterpoint, but it resides within the context of a provided harmony,
-i.e. the practice of moving voices from chord A to chord B. It’s the idea that you are given
-harmonies and you must voice each chord so that the voices advance in an appropriate
-manner.</p>
-    </div>
-  </div>
-</div>
-
-
-<!-- Fifth Grid -->
-<div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Model Assumptions</h1>
-
-        <p class="w3-text-grey"></p>
-    </div>
-  </div>
-</div>
-
-
-
-</body>
-</html>
-
+</head>
 
 

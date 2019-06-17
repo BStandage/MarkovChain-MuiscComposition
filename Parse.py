@@ -20,7 +20,6 @@ class Parse:
         for track in midi.tracks:
             for message in track:
                 if message.type == "set_tempo":
-                    #self.tempo = message.tempo
                     self.tempo = 500000
                 elif message.type == "note_on":
                     # note is played at the same time
@@ -71,11 +70,6 @@ class Parse:
             return after
         else:
             return before
-
-        #print('BPM: ', tempo2bpm(self.tempo))
-        #print("ms: ", ms)
-        #print("bucket: ", int(ms - (ms % 125) + 125))
-        #return int(ms - (ms % 125) + 125)
 
 
     # convert a transition frequency matrix to a transition probability matrix

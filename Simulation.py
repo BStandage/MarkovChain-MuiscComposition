@@ -26,12 +26,11 @@ class Simulation:
 
 
     # We want to randomly begin the piece on the 1 or the 5
-    # *NOT IMPLEMENTED*
     # Function: get_init_note
     # accept: self
     # return: initial note given a track simulation object
     def get_init_note(self):
-        return [60]
+        return [random.choice([67])]
 
 
     # Transition function simulations transition given current state
@@ -45,8 +44,6 @@ class Simulation:
         for i in self.tpm[note]:
             transition_probabilities.append(self.tpm[note][i][1])
             keys.append([i, self.tpm[note][i][0]])
-
-        print(note)
 
         return keys[np.random.choice(len(keys), p=transition_probabilities)]
 
@@ -65,18 +62,16 @@ class Simulation:
                     next[0] = self.leap_rule()
                     print('Added via Leap: ', next)
                     break
-                elif l < 16 and initial_note[0] in [67, 71, 79, 83]:
+                # downbeat and resolving note check
+                elif l < 16 and initial_note[0] in [67, 71, 79, 83] and self.is_downbeat():
                     next[0] = self.resolving_note()
                     l = 0
+                    print("Final Note Reached.")
                     break
                 # if not then generate most probable
                 elif self.not_trill(next[0]) and next[0] in self.state_space and next[0] != initial_note[0] and difference <= 9:
                     print('Added note: ', next)
                     break
-                print('Failed Note: ', next[0])
-                print('Why?:')
-                print('No Trill?: ', self.not_trill(next[0]))
-                print('In state space?: ', (next[0] in self.state_space))
 
             self.track.track.append(self.to_midi_message(next[0], next[1]))
             l -= 1
@@ -139,13 +134,13 @@ class Simulation:
         complement = [1, 3, 6, 8, 10]
         for i in range(13):
             if i not in complement:
-                state_space.append(self.initial_note[0] + i)
+                #state_space.append(self.initial_note[0] + i)
+                state_space.append(60 + i)
 
         # Extend state space an additional octave higher
         for i in range(1, len(state_space)):
           state_space.append(state_space[i] + 12)
 
-        print(state_space)
         return state_space
 
 
@@ -167,3 +162,20 @@ class Simulation:
             final = 84
 
         return final
+
+    # Function: is_downbeat
+    # accept: self
+    # return: True if the next note played will be on the first or third beat
+    def is_downbeat(self):
+        # if the total duration mod 1000 == 0 then it is a downbeat
+        time = 0
+
+        for i in self.track.track:
+            time += i[1].time
+        if time % 1000 == 0:
+            return True
+        else:
+            return False
+
+
+    # second voice must come in on the final note of the first voice
