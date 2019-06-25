@@ -41,9 +41,7 @@ class Track:
         simulate = Simulation(tpm, self)
         simulate.next_state(simulate.get_init_note(), self.length)
 
-
-
-    #
+    # not used yet
     def shift_track(self):
         for i in range(0, 16):
             self.track.append([Message('note_on', note=0, velocity=0, time=0),
@@ -92,4 +90,6 @@ if __name__ == '__main__':
 
     midifile = track1.write(track_list, 'testTrack1.6.mid')
     print('Complete!')
+
+    # This calls a script I wrote to automatically play midi files via the terminal
     subprocess.call(['playmidi /Users/audreystandage/PycharmProjects/MarkovChain-MusicComposition/testTrack1.5.mid'], shell=True)

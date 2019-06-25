@@ -36,7 +36,7 @@ class Simulation:
     # Transition function simulations transition given current state
     # Function: transition
     # accept: a note
-    # return: the most likely next note given the initial note
+    # return: the most likely next note given the previous note
     def transition(self, note):
         transition_probabilities = []
         keys = []
@@ -125,8 +125,7 @@ class Simulation:
 
 
     # Define a statespace for the track. This state space is normalized over the C major scale
-    # if the piece leaps upwards
-    # Function: leap_rule
+    # Function: state_space
     # accept: self
     # return: a statespace normalized about C Major
     def state_space(self):
@@ -146,7 +145,7 @@ class Simulation:
 
     # ensures that the piece ends on a resolving tone
     # must add an additional function to make sure the resolving note also happens on the first or third beat
-    # Function: leap_rule
+    # Function: resolving_note
     # accept: self
     # return: the final note of the piece
     def resolving_note(self):
@@ -176,6 +175,3 @@ class Simulation:
             return True
         else:
             return False
-
-
-    # second voice must come in on the final note of the first voice
